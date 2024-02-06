@@ -1,8 +1,31 @@
-import { Link } from "react-router-dom"
+import { Link, createSearchParams, useNavigate } from "react-router-dom"
 import { Input } from "src/components/Input/Input"
+import { CategoryType } from "src/types/category.type"
+import { QueryConfig } from "../ProductList"
+import classNames from "classnames"
+
+interface Props {
+    categoryData: CategoryType[],
+    queryConfig: QueryConfig
+}
+
+export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
+    const { category } = queryConfig
+    const navigate = useNavigate()
 
 
-export const AsideFilter = () => {
+    // const handleSubmitPrice = (e: any) => {
+    //     e.preventDefault()
+    //     console.log(e)
+    //     // navigate({
+    //     //     pathname: '/',
+    //     //     search: createSearchParams({
+    //     //         ...queryConfig,
+    //     //         price_max: 
+    //     //     }).toString()
+    //     // })
+    // }
+
     return (
         <div className="py-4">
             <Link to='' className="flex items-center font-bold">
@@ -12,18 +35,23 @@ export const AsideFilter = () => {
             </Link>
             <div className="bg-gray-300 h-[1px] my-4" />
             <ul>
-                <li className="py-2 pl-2">
-                    <Link to='' className="relative px-2 text-orange font-semibold flex items-center">
-                        <svg viewBox="0 0 4 7" className="w-3 h-3 fill-orange"><polygon points="4 3.5 0 0 0 7" /></svg>
-
-                        Thời trang nam
-                    </Link>
-                </li>
-            </ul>
-            <ul>
-                <li className="py-2 pl-2">
-                    <Link to='' className="relative px-2"> Điện thoại </Link>
-                </li>
+                {
+                    categoryData.map((item) => {
+                        const isActive = category === item._id
+                        return <li key={item._id} className="py-2 pl-2">
+                            <Link to={{
+                                pathname: '/',
+                                search: createSearchParams({
+                                    ...queryConfig,
+                                    category: item._id
+                                }).toString()
+                            }} className={classNames('relative px-2  flex items-center', { 'text-orange  font-semibold': isActive })}>
+                                {isActive && <svg viewBox="0 0 4 7" className="w-3 h-3 fill-orange"><polygon points="4 3.5 0 0 0 7" /></svg>}
+                                {item.name}
+                            </Link>
+                        </li>
+                    })
+                }
             </ul>
             <Link to='' className="flex items-center font-bold uppercase mt-4">
                 <svg enableBackground="new 0 0 15 15" viewBox="0 0 15 15" x={0} y={0} className="w-3 h-4 fill-current stroke-current mr-3"><g><polyline fill="none" points="5.5 13.2 5.5 5.8 1.5 1.2 13.5 1.2 9.5 5.8 9.5 10.2" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit={10} /></g></svg>
@@ -32,7 +60,7 @@ export const AsideFilter = () => {
             <div className="bg-gray-300 h-[1px] my-4" />
             <div className="my-5">
                 <div>Khoản giá</div>
-                <form className="mt-2">
+                <form noValidate className="mt-2">
                     <div className="flex items-start">
                         <Input
                             type="text"
@@ -51,7 +79,7 @@ export const AsideFilter = () => {
                         />
 
                     </div>
-                    <button className="w-full uppercase text-sm py-3 text-center bg-orange text-white hover:bg-orange/80">Áp dụng</button>
+                    <button type='submit' className="w-full uppercase text-sm py-3 text-center bg-orange text-white hover:bg-orange/80">Áp dụng</button>
 
                 </form>
 

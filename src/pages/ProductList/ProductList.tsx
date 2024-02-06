@@ -8,6 +8,7 @@ import { getProduct } from "src/servers/product.api";
 
 import { ProductListConfig } from "src/types/product.type";
 import Pagination from "src/components/Pagination/Pagination";
+import { fetchCategoryApi } from "src/servers/category.api";
 
 
 export type QueryConfig = {
@@ -26,29 +27,36 @@ export default function ProductList() {
     order: queryParams.order,
     price_min: queryParams.price_min,
     price_max: queryParams.price_max,
-    rating_filter: queryParams.rating_filter
+    rating_filter: queryParams.rating_filter,
+    category: queryParams.category,
+    sort_by: queryParams.sort_by
   }, isUndefined)
 
-  const { data } = useQuery({
+  const { data: productData } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => getProduct(queryConfig as ProductListConfig),
     placeholderData: keepPreviousData,
     staleTime: 3 * 60 * 1000
   })
 
+  const { data: categroyData } = useQuery({
+    queryKey: ['category'],
+    queryFn: () => fetchCategoryApi(),
+  })
+
   return <div className="bg-gray-200 py-6 ">
     <div className="container" >
       {
-        data && (
+        productData && (
           <div className="grid grid-cols-12 gap-6">
             <div className="col-span-3">
-              <AsideFilter />
+              <AsideFilter queryConfig={queryConfig} categoryData={categroyData?.data.data || []} />
             </div>
             <div className="col-span-9">
-              <SortProductList queryConfig={queryConfig} pageSize={data.data.data.pagination.page_size} />
+              <SortProductList queryConfig={queryConfig} pageSize={productData.data.data.pagination.page_size} />
               <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap3">
                 {
-                  data.data.data.products.map((product) => {
+                  productData.data.data.products.map((product) => {
                     return <div className="col-span-1" key={product._id}>
                       <Product product={product} />
                     </div>
@@ -56,7 +64,7 @@ export default function ProductList() {
                 }
 
               </div>
-              <Pagination queryConfig={queryConfig} pageSize={data.data.data.pagination.page_size} />
+              <Pagination queryConfig={queryConfig} pageSize={productData.data.data.pagination.page_size} />
             </div>
           </div>
         )
