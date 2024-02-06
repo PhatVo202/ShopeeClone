@@ -1,4 +1,4 @@
-import { Link, createSearchParams, useNavigate } from "react-router-dom"
+import { Link, createSearchParams } from "react-router-dom"
 import { Input } from "src/components/Input/Input"
 import { CategoryType } from "src/types/category.type"
 import { QueryConfig } from "../ProductList"
@@ -11,7 +11,7 @@ interface Props {
 
 export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
     const { category } = queryConfig
-    const navigate = useNavigate()
+
 
 
     // const handleSubmitPrice = (e: any) => {
