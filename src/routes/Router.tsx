@@ -22,25 +22,6 @@ export default function Router() {
   const routing = useRoutes([
     {
       path: '',
-      element: <AuthGuard />,
-      children: [
-        {
-          path: 'profile',
-          element: <MainLayout>
-            <Profile />
-          </MainLayout>
-        },
-        {
-          path: '',
-          index: true,
-          element: <MainLayout>
-            <ProductList />
-          </MainLayout>
-        },
-      ]
-    },
-    {
-      path: '',
       element: <NoAuthGuard />,
       children: [
         {
@@ -61,6 +42,27 @@ export default function Router() {
         }
       ]
     },
+    {
+      path: '',
+      index: true,
+      element: <MainLayout>
+        <ProductList />
+      </MainLayout>
+    }
+    ,
+    {
+      path: '',
+      element: <AuthGuard />,
+      children: [
+        {
+          path: 'profile',
+          element: <MainLayout>
+            <Profile />
+          </MainLayout>
+        },
+      ]
+    },
+
 
   ])
   return routing

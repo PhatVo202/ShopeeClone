@@ -5,6 +5,7 @@ import { arrow } from '@floating-ui/react';
 import { motion, AnimatePresence } from "framer-motion"
 import { AppContext } from "src/contexts/app.context";
 
+
 export const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { isAuthenticated } = useContext(AppContext)

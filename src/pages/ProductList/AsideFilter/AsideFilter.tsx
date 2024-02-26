@@ -1,30 +1,56 @@
-import { Link, createSearchParams } from "react-router-dom"
-import { Input } from "src/components/Input/Input"
+import { Link, createSearchParams, useNavigate } from "react-router-dom"
 import { CategoryType } from "src/types/category.type"
 import { QueryConfig } from "../ProductList"
 import classNames from "classnames"
+import { useForm, Controller } from "react-hook-form"
+import { InputNumber } from "src/components/InputNumber/InputNumber"
+import { yupResolver } from "@hookform/resolvers/yup"
+import { schema, Schema, NoUndefinedField } from "src/utils/rule"
+import { ObjectSchema } from "yup"
+import { Rate } from "antd"
+import { omit } from "lodash"
 
 interface Props {
     categoryData: CategoryType[],
     queryConfig: QueryConfig
 }
 
+type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
+
+const priceSchema = schema.pick(['price_min', 'price_max'])
+
 export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
-    const { category } = queryConfig
+    const { category } = queryConfig;
+    const navigate = useNavigate()
 
+    const { control, handleSubmit, formState: { errors }, trigger } = useForm<FormData>({
+        defaultValues: {
+            price_min: '',
+            price_max: '',
+        },
+        resolver: yupResolver(priceSchema as ObjectSchema<FormData>),
+    });
 
+    // const valueInput = watch()
+    // console.log(valueInput)
 
-    // const handleSubmitPrice = (e: any) => {
-    //     e.preventDefault()
-    //     console.log(e)
-    //     // navigate({
-    //     //     pathname: '/',
-    //     //     search: createSearchParams({
-    //     //         ...queryConfig,
-    //     //         price_max: 
-    //     //     }).toString()
-    //     // })
-    // }
+    const onSubmit = handleSubmit((data) => {
+        navigate({
+            pathname: '/',
+            search: createSearchParams({
+                ...queryConfig,
+                price_max: data.price_max,
+                price_min: data.price_min
+            }).toString()
+        })
+    })
+
+    const handleDeletePath = () => {
+        navigate({
+            pathname: '/',
+            search: createSearchParams(omit(queryConfig, ['price_max', 'price_min', 'rating_filter', 'category'])).toString()
+        })
+    }
 
     return (
         <div className="py-4">
@@ -60,24 +86,52 @@ export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
             <div className="bg-gray-300 h-[1px] my-4" />
             <div className="my-5">
                 <div>Khoản giá</div>
-                <form noValidate className="mt-2">
+                <form noValidate className="mt-2" onSubmit={onSubmit}>
                     <div className="flex items-start">
-                        <Input
-                            type="text"
-                            className="grow"
-                            name="form"
-                            placehoder="₫ TỪ"
-                            classNameInput="px-1 py-1 text-sm w-full outline-none border border-gray-300 border-gray-500 rounded-sm focus:shadow-sm"
-                        />
+                        <Controller
+                            control={control}
+                            name="price_min"
+                            render={({ field }) => {
+                                return <InputNumber
+                                    type="text"
+                                    className="grow"
+                                    classNameError="hidden"
+                                    name="form"
+                                    placehoder="₫ TỪ"
+                                    classNameInput="px-1 py-1 text-sm w-full outline-none border border-gray-300 border-gray-500 rounded-sm focus:shadow-sm"
+                                    onChange={(event) => {
+                                        field.onChange(event)
+                                        trigger('price_max')
+                                    }}
+                                    value={field.value}
+                                />
+                            }}
+                        /
+                        >
                         <div className="mx-2 mt-2 shrink-0">-</div>
-                        <Input
-                            type="text"
-                            className="grow"
-                            name="form"
-                            placehoder="₫ ĐẾN"
-                            classNameInput="px-1 py-1 text-sm w-full outline-none border border-gray-300 border-gray-500 rounded-sm focus:shadow-sm"
-                        />
-
+                        <Controller
+                            control={control}
+                            name="price_max"
+                            render={({ field }) => {
+                                return <InputNumber
+                                    type="text"
+                                    className="grow"
+                                    name="form"
+                                    placehoder="₫ ĐẾN"
+                                    classNameError="hidden"
+                                    classNameInput="px-1 py-1 text-sm w-full outline-none border border-gray-300 border-gray-500 rounded-sm focus:shadow-sm"
+                                    onChange={(event) => {
+                                        field.onChange(event)
+                                        trigger('price_min')
+                                    }}
+                                    value={field.value}
+                                />
+                            }}
+                        /
+                        >
+                    </div>
+                    <div className="text-sm text-red-600 text-center my-2">
+                        {errors.price_min?.message}
                     </div>
                     <button type='submit' className="w-full uppercase text-sm py-3 text-center bg-orange text-white hover:bg-orange/80">Áp dụng</button>
 
@@ -88,16 +142,49 @@ export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
             <div className="text-sm">Đánh giá</div>
             <ul className="my-3">
                 <li className="py-1 pl-2">
-                    <Link to='' className="flex items-center text-sm" >
-                        {Array(5).fill(0).map((_, index) => {
-                            return <svg key={index} viewBox="0 0 9.5 8" className="w-6 h-6 fill-current"><defs><linearGradient id="ratingStarGradient" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset={0} stopColor="#ffca11" /><stop offset={1} stopColor="#ffad27" /></linearGradient><polygon id="ratingStar" points="14.910357 6.35294118 12.4209136 7.66171903 12.896355 4.88968305 10.8823529 2.92651626 13.6656353 2.52208166 14.910357 0 16.1550787 2.52208166 18.9383611 2.92651626 16.924359 4.88968305 17.3998004 7.66171903" /></defs><g fill="url(#ratingStarGradient)" fillRule="evenodd" stroke="none" strokeWidth={1}><g transform="translate(-876 -1270)"><g transform="translate(155 992)"><g transform="translate(600 29)"><g transform="translate(10 239)"><g transform="translate(101 10)"><use stroke="#ffa727" strokeWidth=".5" xlinkHref="#ratingStar" /></g></g></g></g></g></g></svg>
-
-                        })}
+                    <Link to={{
+                        pathname: '/',
+                        search: createSearchParams({
+                            ...queryConfig,
+                            rating_filter: '5'
+                        }).toString()
+                    }} className="flex items-center text-sm cursor-pointer" >
+                        <Rate disabled defaultValue={5} />
+                    </Link>
+                    <Link to={{
+                        pathname: '/',
+                        search: createSearchParams({
+                            ...queryConfig,
+                            rating_filter: '4'
+                        }).toString()
+                    }} className="flex items-center text-sm cursor-pointer" >
+                        <Rate disabled defaultValue={4} />
+                        <span className="text-sm ml-2">trở lên</span>
+                    </Link>
+                    <Link to={{
+                        pathname: '/',
+                        search: createSearchParams({
+                            ...queryConfig,
+                            rating_filter: '3'
+                        }).toString()
+                    }} className="flex items-center text-sm cursor-pointer" >
+                        <Rate disabled defaultValue={3} />
+                        <span className="text-sm ml-2">trở lên</span>
+                    </Link>
+                    <Link to={{
+                        pathname: '/',
+                        search: createSearchParams({
+                            ...queryConfig,
+                            rating_filter: '2'
+                        }).toString()
+                    }} className="flex items-center text-sm cursor-pointer" >
+                        <Rate disabled defaultValue={2} />
+                        <span className="text-sm ml-2">trở lên</span>
                     </Link>
                 </li>
             </ul>
             <div className="bg-gray-300 h-[1px] my-4" />
-            <button className="w-full uppercase text-sm py-3 bg-orange text-white hover:bg-orange/80">Xoá tất cả</button>
+            <button onClick={() => handleDeletePath()} className="w-full uppercase text-sm py-3 bg-orange text-white hover:bg-orange/80">Xoá tất cả</button>
         </div>
     )
 }

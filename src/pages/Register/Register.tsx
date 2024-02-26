@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { Input } from 'src/components/Input/Input'
-import { Schema, schema } from 'src/utils/rule'
+import { NoUndefinedField, Schema, schema } from 'src/utils/rule'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { registerApi } from 'src/servers/auth.api'
@@ -9,14 +9,18 @@ import { toast, Flip } from 'react-toastify';
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 
+type FormData = NoUndefinedField<Pick<Schema, 'email' | 'password' | 'confirm_password'>>
+
+const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
+
 export default function Register() {
   const { setIsAuthenticated } = useContext(AppContext)
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<Schema>({
-    resolver: yupResolver(schema)
+  } = useForm<FormData>({
+    resolver: yupResolver(registerSchema)
   })
 
   const registerMutation = useMutation({

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Schema, schema } from 'src/utils/rule'
+import { Schema, schema, NoUndefinedField } from 'src/utils/rule'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from 'src/components/Input/Input'
 import { useMutation } from '@tanstack/react-query'
@@ -9,14 +9,17 @@ import { Flip, toast } from 'react-toastify'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 
+
 export const Login = () => {
 
-  const loginSchema = schema.omit(['confirm_password'])
+  type FormData = NoUndefinedField<Pick<Schema, 'email' | 'password'>>
+  const loginSchema = schema.pick(['email', 'password'])
+
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<Omit<Schema, 'confirm_password'>>({
+  } = useForm<FormData>({
     resolver: yupResolver(loginSchema)
   })
 
@@ -28,7 +31,7 @@ export const Login = () => {
   })
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+
     loginMutation.mutate(data, {
       onSuccess: data => {
         setIsAuthenticated(true)
@@ -83,6 +86,7 @@ export const Login = () => {
               <div className='mt-3'>
                 <button
                   type='submit'
+
                   className=' w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
                 >
                   Đăng nhập
