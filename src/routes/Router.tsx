@@ -4,6 +4,7 @@ import { AppContext } from 'src/contexts/app.context'
 import { MainLayout } from 'src/layouts/MainLayout/MainLayout'
 import RegisterLayout from 'src/layouts/RegisterLayout/RegisterLayout'
 import { Login } from 'src/pages/Login/Login'
+import { ProductDetail } from 'src/pages/ProductDetail/ProductDetail'
 import ProductList from 'src/pages/ProductList/ProductList'
 import { Profile } from 'src/pages/Profile/Profile'
 import Register from 'src/pages/Register/Register'
@@ -60,6 +61,12 @@ export default function Router() {
             <Profile />
           </MainLayout>
         },
+        {
+          path: ':nameId',
+          element: <MainLayout>
+            <ProductDetail />
+          </MainLayout>
+        }
       ]
     },
 

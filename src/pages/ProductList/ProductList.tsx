@@ -1,8 +1,8 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { omitBy, isUndefined } from 'lodash'
-import { AsideFilter } from "./AsideFilter/AsideFilter";
-import { Product } from "./Product/Product";
-import { SortProductList } from "./SortProductList/SortProductList";
+import { AsideFilter } from "./components/AsideFilter/AsideFilter";
+import { Product } from "./components/Product/Product";
+import { SortProductList } from "./components/SortProductList/SortProductList";
 import { useQueryParams } from "src/hooks/useQueryParams";
 import { getProduct } from "src/servers/product.api";
 

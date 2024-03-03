@@ -8,5 +8,5 @@ export const getProduct = (params: ProductListConfig) => {
   })
 }
 export const getProductDetail = (id: string) => {
-  return http.get<Product>(`products/${id}`)
+  return http.get<ResponseApi<Product>>(`products/${id}`)
 }

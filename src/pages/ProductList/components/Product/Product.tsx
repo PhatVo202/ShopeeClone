@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { Rate } from 'antd';
 import { Product as ProductType } from "src/types/product.type";
+import { generateNameId } from "src/utils/utils";
 
 interface Props {
     product: ProductType
@@ -8,7 +9,7 @@ interface Props {
 
 export const Product = ({ product }: Props) => {
     return (
-        <Link to=''>
+        <Link to={`/${generateNameId({ name: product.name, id: product._id })}`}>
             <div className="bg-white shadow rounded-sm hover:translate-y-[-0.5rem] hover:shadow-md duration-100 transition-transform overflow-hidden m-2 ">
                 <div className="w-full pt-[100%] relative">
                     <img src={product.image} alt={product.name} className="absolute top-0 left-0 bg-white w-full h-full object-cover" />
