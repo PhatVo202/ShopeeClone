@@ -33,7 +33,8 @@ export const Login = () => {
   const onSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
       onSuccess: data => {
-        setIsAuthenticated(true)
+        console.log(data),
+          setIsAuthenticated(true)
         navigate('/')
       },
       onError: (errors: any) => {
