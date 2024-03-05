@@ -4,9 +4,10 @@ import DOMPurify from "dompurify"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { InputNumber } from "src/components/InputNumber/InputNumber"
-import { getProductDetail } from "src/servers/product.api"
-import { Product } from "src/types/product.type"
+import { getProduct, getProductDetail } from "src/servers/product.api"
+import { Product as ProductType, ProductListConfig } from "src/types/product.type"
 import { getIdFromNameId, rateSale } from "src/utils/utils"
+import { Product } from "../ProductList/components/Product/Product"
 
 
 
@@ -14,12 +15,13 @@ export const ProductDetail = () => {
     const { nameId } = useParams()
     const id = getIdFromNameId(nameId as string)
     const [valueNumber, setValueNumber] = useState<number>(1)
-    const { data: dataProductDetail } = useQuery({
-        queryKey: ['productDetail', id],
-        queryFn: () => getProductDetail(id as string)
-    })
+
     const [currentIdxImg, setCurrentIdxImg] = useState([0, 5])
     const [activeImg, setActiveImg] = useState('')
+    const { data: dataProductDetail } = useQuery({
+        queryKey: ['productDetail', id],
+        queryFn: () => getProductDetail(id as string),
+    })
 
     const product = dataProductDetail?.data.data
     const currentImage = useMemo(() => product?.images.slice(...currentIdxImg), [product, currentIdxImg])
@@ -30,8 +32,16 @@ export const ProductDetail = () => {
         }
     }, [product])
 
+    const queryConfig: ProductListConfig = { page: 1, limit: 20, category: product?.category._id }
+
+    const { data: productCategory } = useQuery({
+        queryKey: ['category', queryConfig],
+        queryFn: () => getProduct(queryConfig),
+        enabled: Boolean(product),
+    })
+
     const nextImage = () => {
-        if (currentIdxImg[1] < (product as Product)?.images.length) {
+        if (currentIdxImg[1] < (product as ProductType)?.images.length) {
             setCurrentIdxImg(pre => [pre[0] + 1, pre[1] + 1])
         }
     }
@@ -178,8 +188,17 @@ export const ProductDetail = () => {
 
                     </div>
                 </div>
-                <div>
+                <div className="mt-8">
                     <h4 className="text-xl p-4 text-slate-700">Có thể bạn cũng thích</h4>
+                    <div className="mt-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap3">
+                        {
+                            productCategory?.data.data.products.map((product) => {
+                                return <div className="col-span-1" key={product._id}>
+                                    <Product product={product} />
+                                </div>
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         </div>

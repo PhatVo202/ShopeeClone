@@ -1,17 +1,52 @@
-import { FloatingPortal, offset, shift, useFloating, useHover, useInteractions } from "@floating-ui/react";
+import { offset, shift, useFloating, useHover, useInteractions } from "@floating-ui/react";
 import { useContext, useRef, useState } from "react";
-import { Link } from "react-router-dom"
+import { Link, createSearchParams, useNavigate } from "react-router-dom"
 import { arrow } from '@floating-ui/react';
-import { motion, AnimatePresence } from "framer-motion"
 import { AppContext } from "src/contexts/app.context";
+import { QueryConfig } from "src/pages/ProductList/ProductList";
+import { useQueryParams } from "src/hooks/useQueryParams";
+import { isUndefined, omit, omitBy } from "lodash";
+import { useForm } from "react-hook-form";
+import { Schema, schema } from "src/utils/rule";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Popover from "../Popover/Popover";
+import { logout } from "src/servers/auth.api";
+import { useMutation } from "@tanstack/react-query";
 
+type FormData = Pick<Schema, 'name'>
+const nameSchema = schema.pick(['name'])
 
 export const Header = () => {
+    const queryParams: QueryConfig = useQueryParams()
+
+    const queryConfig: QueryConfig = omitBy({
+        page: queryParams.page || '1',
+        limit: queryParams.limit || '20',
+        exclude: queryParams.exclude,
+        name: queryParams.name,
+        order: queryParams.order,
+        price_min: queryParams.price_min,
+        price_max: queryParams.price_max,
+        rating_filter: queryParams.rating_filter,
+        category: queryParams.category,
+        sort_by: queryParams.sort_by
+    }, isUndefined)
+
+    const {
+        register,
+        handleSubmit,
+    } = useForm<FormData>({
+        defaultValues: { name: '' },
+        resolver: yupResolver(nameSchema)
+    })
+
+    const navigate = useNavigate()
+
     const [isOpen, setIsOpen] = useState(false);
-    const { isAuthenticated } = useContext(AppContext)
+    const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
     const arrowRef = useRef(null);
 
-    const { refs, floatingStyles, context, middlewareData } = useFloating({
+    const { refs, context, } = useFloating({
         open: isOpen,
         middleware: [offset(18), shift(), arrow({ element: arrowRef })]
     });
@@ -26,9 +61,36 @@ export const Header = () => {
 
     const hover = useHover(context);
 
-    const { getReferenceProps, getFloatingProps } = useInteractions([
+    const { getReferenceProps } = useInteractions([
         hover,
     ]);
+
+    const handleSearch = handleSubmit((data) => {
+        const config = queryConfig.order ? omit({
+            ...queryConfig
+        }, ['order', 'sort_by']
+        ) : {
+            ...queryConfig,
+            name: data.name
+        }
+
+        navigate({
+            pathname: '/',
+            search: createSearchParams(config).toString()
+        })
+    })
+
+    const logoutMutation = useMutation({
+        mutationFn: () => logout(),
+        onSuccess: () => {
+            setIsAuthenticated(false)
+        }
+
+    })
+
+    const handleLogout = () => {
+        logoutMutation.mutate()
+    }
     return (
         <header className="py-5 bg-[linear-gradient(-180deg,#f53d2d,#f63);]">
             <div className="container">
@@ -52,7 +114,7 @@ export const Header = () => {
 
                             Hỗ trợ</Link>
                         <Link to='' className="flex items-center hover:text-gray-300 relative" ref={refs.setReference} {...getReferenceProps()} onMouseEnter={openPopover} onMouseLeave={hiddenPopover} >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
                             </svg>
                             Tiếng Việt
@@ -89,15 +151,81 @@ export const Header = () => {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
-                            </FloatingPortal>
-
-
+                            </FloatingPortal> */}
+                            <Popover
+                                className='flex cursor-pointer items-center py-1 hover:text-white/70'
+                                renderPopover={
+                                    <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                                        <div className='flex flex-col py-2 pr-28 pl-3'>
+                                            <button className='py-2 px-3 text-left hover:text-orange' >
+                                                Tiếng Việt
+                                            </button>
+                                            <button className='mt-2 py-2 px-3 text-left hover:text-orange' >
+                                                English
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    fill='none'
+                                    viewBox='0 0 24 24'
+                                    strokeWidth={1.5}
+                                    stroke='currentColor'
+                                    className='h-5 w-5'
+                                >
+                                    <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        d='M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418'
+                                    />
+                                </svg>
+                                {/* <span className='mx-1'>{currentLanguage}</span> */}
+                                <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    fill='none'
+                                    viewBox='0 0 24 24'
+                                    strokeWidth={1.5}
+                                    stroke='currentColor'
+                                    className='h-5 w-5'
+                                >
+                                    <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
+                                </svg>
+                            </Popover>
                         </Link>
+
                         {
-                            isAuthenticated && (<div className="flex items-center">
-                                <img className="w-12 h-12" src="https://cdn1.iconfinder.com/data/icons/soleicons-fill-vol-1/64/reactjs_javascript_library_atom_atomic_react-512.png" alt="logo.png" />
-                                <p>Xin chao!</p>
-                            </div>
+                            isAuthenticated && (<Popover
+                                className='ml-6 flex cursor-pointer items-center py-1 hover:text-white/70'
+                                renderPopover={
+                                    <div className='relative rounded-sm border border-gray-200 bg-white shadow-md'>
+                                        <Link
+                                            to='/profile'
+                                            className='block w-full bg-white py-3 px-4 text-left hover:bg-slate-100 hover:text-cyan-500'
+                                        >
+                                            Tài khoản của tôi
+                                        </Link>
+                                        <Link
+                                            to=''
+                                            className='block w-full bg-white py-3 px-4 text-left hover:bg-slate-100 hover:text-cyan-500'
+                                        >
+                                            Đơn mua
+                                        </Link>
+                                        <button
+                                            onClick={() => handleLogout()}
+                                            className='block w-full bg-white py-3 px-4 text-left hover:bg-slate-100 hover:text-cyan-500'
+                                        >
+                                            Đăng xuất
+                                        </button>
+                                    </div>
+                                }
+                            >
+                                <div className='mr-2 h-6 w-6 flex-shrink-0'>
+                                    <img src='https://techvccloud.mediacdn.vn/2020/8/14/148-15974015288501803718399-crop-15974015349661210457462.png' alt='avatar' className='h-full w-full rounded-full object-cover' />
+                                </div>
+                                <div>Hello Phat</div>
+                            </Popover>
                             )
                         }
                         {
@@ -119,9 +247,9 @@ export const Header = () => {
                             </g>
                         </svg>
                     </Link>
-                    <form className="col-span-9">
+                    <form className="col-span-9" onSubmit={handleSearch}>
                         <div className="bg-white flex justify-between">
-                            <input className="w-full p-3 text-sm" type="text" placeholder="Shopee bao ship 0Đ - Đăng ký ngay!" />
+                            <input className="w-full p-3 text-sm" type="text" placeholder="Shopee bao ship 0Đ - Đăng ký ngay!" {...register('name')} />
                             <button className="bg-orange text-white m-0.5 px-5 py-1 rounded-sm" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Schema, schema, NoUndefinedField } from 'src/utils/rule'
+import { Schema, schema } from 'src/utils/rule'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from 'src/components/Input/Input'
 import { useMutation } from '@tanstack/react-query'
@@ -12,7 +12,7 @@ import { AppContext } from 'src/contexts/app.context'
 
 export const Login = () => {
 
-  type FormData = NoUndefinedField<Pick<Schema, 'email' | 'password'>>
+  type FormData = Pick<Schema, 'email' | 'password'>
   const loginSchema = schema.pick(['email', 'password'])
 
   const {
@@ -27,16 +27,14 @@ export const Login = () => {
   const navigate = useNavigate()
 
   const loginMutation = useMutation({
-    mutationFn: (body: Omit<Schema, 'confirm_password'>) => loginApi(body)
+    mutationFn: (body: FormData) => loginApi(body)
   })
 
   const onSubmit = handleSubmit((data) => {
-
     loginMutation.mutate(data, {
       onSuccess: data => {
         setIsAuthenticated(true)
         navigate('/')
-        console.log(data)
       },
       onError: (errors: any) => {
         toast.error(`${errors.response.data?.data.email}`, {
@@ -86,7 +84,6 @@ export const Login = () => {
               <div className='mt-3'>
                 <button
                   type='submit'
-
                   className=' w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
                 >
                   Đăng nhập

@@ -41,7 +41,8 @@ export const schema = yup.object({
       }
       return price_min !== '' && price_max !== ''
     }
-  })
+  }),
+  name: yup.string().required('Tên sản phẩm là bắt buộc').trim()
 })
 
 //Cú pháp -? loại bỏ key optional

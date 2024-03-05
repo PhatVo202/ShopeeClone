@@ -5,4 +5,4 @@ export const registerApi = (body: { email: string; password: string }) => http.p
 
 export const loginApi = (body: { email: string; password: string }) => http.post<AuthResponse>('/login', body)
 
-// export const logout = http.post('/logout')
+export const logout = () => http.post('/logout')
