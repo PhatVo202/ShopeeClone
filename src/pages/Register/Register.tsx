@@ -24,7 +24,7 @@ export default function Register() {
   })
 
   const registerMutation = useMutation({
-    mutationFn: (body: Omit<Schema, 'confirm_password'>) => registerApi(body)
+    mutationFn: (body: Pick<Schema, 'email' | 'password'>) => registerApi(body)
   })
 
   const onSubmit = handleSubmit((data) => {
