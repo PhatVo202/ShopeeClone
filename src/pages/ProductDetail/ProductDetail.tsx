@@ -3,11 +3,11 @@ import { Rate } from "antd"
 import DOMPurify from "dompurify"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import { InputNumber } from "src/components/InputNumber/InputNumber"
 import { getProduct, getProductDetail } from "src/servers/product.api"
 import { Product as ProductType, ProductListConfig } from "src/types/product.type"
 import { getIdFromNameId, rateSale } from "src/utils/utils"
 import { Product } from "../ProductList/components/Product/Product"
+import { QuantityController } from "src/components/QuantityController.tsx/QuantityController"
 
 
 
@@ -79,6 +79,10 @@ export const ProductDetail = () => {
         imgRef.current?.removeAttribute('style')
     }
 
+    const handleBuyCount = (value: number) => {
+        setValueNumber(value)
+    }
+
     if (!product) return null
     return (
         <div className="bg-gray-200 py-6 ">
@@ -139,31 +143,8 @@ export const ProductDetail = () => {
                             </div>
                             <div className="flex items-center justify-start gap-12 mt-7">
                                 <p>Số lượng</p>
-                                <div className="flex items-center justify-start ">
-                                    <button onClick={() => {
-                                        if (valueNumber < 2) return
-                                        setValueNumber(valueNumber - 1)
-                                    }} className="border py-1 px-2 border-gray-300 rounded-sm w-">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                                        </svg>
-
-                                    </button>
-                                    <InputNumber
-                                        type="text"
-                                        classNameError="hidden"
-                                        name="form"
-                                        classNameInput="px-1 py-1 text-sm w-12 outline-none border border-gray-300 rounded-sm focus:shadow-sm text-center"
-                                        value={valueNumber}
-                                    />
-                                    <button onClick={() => setValueNumber(valueNumber + 1)} className="border py-1 px-2 border-gray-300 rounded-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5 ">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                        </svg>
-                                    </button>
-                                    <p className="ml-3 text-gray-500 text-sm">{product.view} Sản phẩm có sẵn</p>
-                                </div>
-
+                                <QuantityController onDescrease={handleBuyCount} onInscrease={handleBuyCount} onType={handleBuyCount} value={valueNumber} max={product.quantity} />
+                                <p className="ml-3 text-gray-500 text-sm">{product.quantity} Sản phẩm có sẵn</p>
                             </div>
                             <div className="mt-7 flex items-center">
                                 <button className="border px-6 py-3 border-[#ee4d2d] bg-[rgba(255,87,34,0.1)] text-[#ee4d2d] flex items-center rounded capitalize hover:bg-[rgba(233,153,128,0.1)]">
