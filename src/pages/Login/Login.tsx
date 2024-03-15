@@ -72,6 +72,7 @@ export const Login = () => {
                 name='email'
                 className='mt-8'
                 errorMessage={errors.email?.message}
+
               />
               <Input
                 type='password'

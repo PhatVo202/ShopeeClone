@@ -11,7 +11,12 @@ import { Schema, schema } from "src/utils/rule";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Popover from "../Popover/Popover";
 import { logout } from "src/servers/auth.api";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { purchasesStatus } from "src/constants/purchases";
+import { getPurchasesApi } from "src/servers/purchases.api";
+import { PurchasesListStatus } from "src/types/purchases.type";
+import noProduct from "src/assets/images/no-product.png"
+import { queryClient } from "src/main";
 
 type FormData = Pick<Schema, 'name'>
 const nameSchema = schema.pick(['name'])
@@ -84,6 +89,7 @@ export const Header = () => {
         mutationFn: () => logout(),
         onSuccess: () => {
             setIsAuthenticated(false)
+            queryClient.removeQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
         }
 
     })
@@ -91,6 +97,14 @@ export const Header = () => {
     const handleLogout = () => {
         logoutMutation.mutate()
     }
+
+    const { data: dataCart } = useQuery({
+        queryKey: ['purchases', { status: purchasesStatus.inCart }],
+        queryFn: () => getPurchasesApi(purchasesStatus.inCart as PurchasesListStatus),
+        enabled: isAuthenticated
+    })
+
+    const productDataCart = dataCart?.data.data
     return (
         <header className="py-5 bg-[linear-gradient(-180deg,#f53d2d,#f63);]">
             <div className="container">
@@ -143,7 +157,7 @@ export const Header = () => {
                                         d='M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418'
                                     />
                                 </svg>
-                                {/* <span className='mx-1'>{currentLanguage}</span> */}
+
                                 <svg
                                     xmlns='http://www.w3.org/2000/svg'
                                     fill='none'
@@ -217,49 +231,63 @@ export const Header = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                 </svg>
                             </button>
-
                         </div>
                     </form>
-                    <Link to='' className="text-white">
+                    <Link to='/cart' className="text-white">
                         <Popover renderPopover={
                             <div className="bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm">
-                                <div className="p-2">
-                                    <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
-                                    <div className="mt-5">
-                                        <div className="mt-4 flex">
-                                            <div className="flex-shrink-0">
-                                                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8PDxAQDQ8NDQ0NEA8NDw8NDw8NDw0NFREWFhURFRMYHSggGBolHRUTITEhJSkrLi4uFx8zODMsNygtLisBCgoKDQ0OFxAQFSsdFR0tKy0vLSstKystLSstKystKystLSsuKy0tLSstLSsrLS0tLS0rLSstKys3KysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQIDBQYEB//EADgQAQACAAMDCQYEBgMAAAAAAAABAgMEESExcQUSIjJBUWFysQZSgZGhwRWy4fATQkOCotEzY3P/xAAYAQEBAQEBAAAAAAAAAAAAAAAAAQMCBP/EABwRAQEAAwADAQAAAAAAAAAAAAABAhESEyExA//aAAwDAQACEQMRAD8A+4gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACtrxEazMREb5nZENPnuX611rgxF7e9OykcO2UtkWTbczaI3zpxefL5/BxLWrh4lLWrviJ26d8d8eMOQzeaxMXbiWm3dG6sf2vFi7LVtXWJjZrGyY4OPI64fRRxWDyzmK/wBSZ88Rb1eiPaHH/wCqeNf1XyROa60clb2ix+z+FH9s/wC2DF5bzFv6mnlrWPseSHNdZm89hYWn8W9ac6dIidsz8I7PFmpeJjWsxMTumJ1ifi+dxeb3m1ptaYjTW0zMzM8fD1e3KY98Pbh2ms+G6eMbpTyLw7kaPJcvxOkY0c2ffrtr8Y7G5w8StoiazFondMTrDuWVzZpcBUAAAAAAAAAAAAAAHj5S5QpgV1tttPVpG+36M+YxopWbW2RWJmXFZvHti3te87bTs8K9kOcstOsZtfN5/Expn+Jbo9lY2Vj4MEKYN9ddOy2n0hkY1oMeLhxaJrO6f3qy6GiDwUvzOjaZiY3bZ0mFcPP4c6Vri4N8TW0TT+JSLbJnZzYiZ103vZi4UWjS0a93hwl4rck0151bc20bYmaxMx8VlKzRma7Y52Hz4mOjW9bWiPGNNS19dldZmflDDTkmsW59ra2nfaKxFp/u3vdhYUVjSsfviUiuFhRWIiPj95ZyIToiqzDNls1fCnXDtNe+N9Z4wxaCo6zkvlKuPGk9HEjrV7/GPB73DYeJalotSdLVnWHZ5THjEpW9d1o+U9sNccts8sdMwDtyAAAAAAAAAAAx4+LFKzadkViZBo/aTN7sKO3pW4dkfvuaGWXMY04l7Xn+adeEdkKTDDK7rWTTyZGduJHdefy1ex4uTts4vhfT/Gr3OXSBKREQjmrAI5posaAqnQSColF908JFY6Trbg33s7mtJnCndbpV83bHy9HP5bbrPfq9OFeazFq7LVmJjjC43VSzbtxiyuPGJSt43WjXhPbDK9DEAAAAAAAAAAaL2lzWkRhRvttt5Y/X0bu9tImZ7HF5zMTi4lr9kzpHljc4zuo6xnthgtCS25i0eTkrdi/+tvy1e15OTOrfxxL/AGj7PYKjRIkRAkBCQ0BA8M8nTt0x8fWdd+JOkbOyIRiZDEmdmPi1jWZ0i0zvB71MedKW8K2n6KZbBtSJi2JbE1nWJtG7wTm/+O/kt6SKpko6McHoYcrHRhmBuvZ3NbbYU9vTr94+/wA2+cVgY04d63jfWYnj3w7LCxItWLV2xaImOEtsLuMsp7XAduQAAAAAAAGp9oc1zMLmxPSv0fh2/vxczWG75cymJe/OjbWI0iN3yaeaTE6TExxZZ720x+KkmpadGbth5PpzaT58Sf8AOXqY8GOj8bfmlkABIgAACUFdBZXRQY8xHQt5bejIrjdW3CfQVjy25lY8t1YZALN97NZvnUthTvw51jyT/qdfnDRViZnSImZ7o2tvyLydiVxIxLTzIiJia75tE9k93ZPwd4b25y+OgAbMgAAAAAAAETWJ3vHmeTqXjdD2gOZzXI9q7a/Kdv1azMYU1jS0TDuJh5szk6WidYj7OLhK6mVcbl+p8bfmllWx8OK2tWsaREzpCsMWgkTAAAAAGiEgIVxY6M8J9FlqxrMRO6ZiAYcphzaKxWJmdI2RDb5TkW1tuJPNjujf828y2UphxpSsRHgztZ+ccXKvLlcjh4cdGsa9/bL1A0cAAAAAAAAAAAACuJungspi9WeAOPzXXv5pUhfMde3mn1Vee/W0AEABFAFAAQTTfHGPVVMb44wDtQHpYgAAAAAAAAAAAAACmN1Z4LqY3VngDkMfr280+qi2N1reafVV562iEgighKACZUQACJkCRHawlFezgl6WIAAAAAAAAAAAAAAx4/VngyMeY6s8Achi9aeM+qqcTrTxn1Q89bACKhMIIQWQAEISQoglKJB2lN0cIWVpujhCz0sAAAAAAAAAAAAAABizPUngysWZ6k8AchbfPGUJtvnih562JIJQighMIJCAAQlRAEg7Wu6OCUQl6WAAAAAAAAAAAAAAAw5vqTwZmHOdSQcjMoB5m6JQWkATCuqUFhACFlY3rKCJJRIO2hKIS9LAAAAAAAAAAAAAAAYM71JZ2PMYfOrMd4ON1JbmeRJ96fopPIc+9P0Y8Vr3GmvZOrbW5CtP80/KE/gdve9E4p1Gn1WbX8Et730T+CW976HGR1GqgltY5Ev730R+CW976fqcU6jURbavMtnHId9ded9P1T+C3976fqvFOo1WqJltvwS/vfRkwuQtZ6Vp07dNE4p1G+gBuyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/2Q==" alt="anh" className="w-11 h-11 object-cover" />
+                                {
+                                    productDataCart ? (
+                                        <div className="p-2">
+                                            <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
+                                            <div className="mt-5">
+                                                {
+                                                    productDataCart.slice(0, 5).map((productCart) => {
+                                                        return <div className="mt-4 flex" key={productCart._id}>
+                                                            <div className="flex-shrink-0">
+                                                                <img src={productCart.product.image} alt={productCart.product.name} className="w-11 h-11 object-cover" />
+                                                            </div>
+                                                            <div className="flex-grow ml-2 overflow-hidden">
+                                                                <div className="truncate">
+                                                                    {productCart.product.name}
+                                                                </div>
+                                                            </div>
+                                                            <div className="ml-2 flex-shrink-0">
+                                                                ₫{productCart.product.price * productCart.product.quantity}
+                                                            </div>
+                                                        </div>
+                                                    })
+                                                }
                                             </div>
-                                            <div className="flex-grow ml-2 overflow-hidden">
-                                                <div className="truncate">
-                                                    Áo Thun Nam, Áo Thun Cao Cấp Chính Hãng
+                                            <div className='mt-6 flex items-center justify-between'>
+                                                <div className='text-xs capitalize text-gray-500'>
+                                                    {productDataCart.length > 5 && productDataCart.length - 5} Thêm hàng vào giỏ
                                                 </div>
-                                            </div>
-                                            <div className="ml-2 flex-shrink-0">
-                                                199999d
+                                                <Link
+                                                    to='/cart'
+                                                    className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'
+                                                >
+                                                    Xem giỏ hàng
+                                                </Link>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='mt-6 flex items-center justify-between'>
-                                        <div className='text-xs capitalize text-gray-500'>
-                                            Thêm hàng vào giỏ
+                                    ) : (
+                                        <div className="flex items-center justify-center h-[300px] w-[300px] p-2">
+                                            <img src={noProduct} alt="no purchases" className="w-24 h-24" />
+                                            <div className="mt-2 ">Chưa có sản phẩm</div>
                                         </div>
-                                        <Link
-                                            to=''
-                                            className='rounded-sm bg-orange px-4 py-2 capitalize text-white hover:bg-opacity-90'
-                                        >
-                                            Xem giỏ hàng
-                                        </Link>
-                                    </div>
-                                </div>
+                                    )
+                                }
+
                             </div>
                         }>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                            </svg>
+                            <div className="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                </svg>
+                                {productDataCart && <span className="absolute -top-3 left-5 text-orange bg-white rounded-full text-center w-6 h-6 leading-6">{productDataCart?.length}</span>}
+                            </div>
                         </Popover>
-
-
                     </Link>
                 </div>
 

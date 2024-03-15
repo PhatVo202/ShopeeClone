@@ -3,6 +3,7 @@ import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import { AppContext } from 'src/contexts/app.context'
 import { MainLayout } from 'src/layouts/MainLayout/MainLayout'
 import RegisterLayout from 'src/layouts/RegisterLayout/RegisterLayout'
+import { Cart } from 'src/pages/Cart/Cart'
 import { Login } from 'src/pages/Login/Login'
 import { ProductDetail } from 'src/pages/ProductDetail/ProductDetail'
 import ProductList from 'src/pages/ProductList/ProductList'
@@ -49,6 +50,12 @@ export default function Router() {
       element: <MainLayout>
         <ProductList />
       </MainLayout>
+    },
+    {
+      path: ':nameId',
+      element: <MainLayout>
+        <ProductDetail />
+      </MainLayout>
     }
     ,
     {
@@ -62,9 +69,9 @@ export default function Router() {
           </MainLayout>
         },
         {
-          path: ':nameId',
+          path: '/cart',
           element: <MainLayout>
-            <ProductDetail />
+            <Cart />
           </MainLayout>
         }
       ]

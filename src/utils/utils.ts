@@ -14,3 +14,7 @@ export const getIdFromNameId = (nameId: string) => {
   const arr = nameId.split('-i.')
   return arr[arr.length - 1]
 }
+
+export function formatCurrency(currency: number) {
+  return new Intl.NumberFormat('de-DE').format(currency)
+}

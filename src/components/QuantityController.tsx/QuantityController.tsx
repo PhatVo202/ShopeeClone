@@ -6,10 +6,10 @@ interface Props extends InputNumberProp {
     onInscrease: (value: number) => void
     onType?: (value: number) => void
     classNameWrapper?: string
-
+    onFocusOut?: (value: number) => void
 }
 
-export const QuantityController = ({ max, onDescrease, onInscrease, onType, classNameWrapper = 'ml-10 flex items-center', value, ...rest }: Props) => {
+export const QuantityController = ({ max, onDescrease, onInscrease, onFocusOut, onType, classNameWrapper = 'ml-10 flex items-center', value, ...rest }: Props) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let _value = Number(event.target.value)
@@ -39,6 +39,10 @@ export const QuantityController = ({ max, onDescrease, onInscrease, onType, clas
 
         onDescrease && onDescrease(_value)
     }
+
+    const handleOnFocusOut = (event: React.FocusEvent<HTMLInputElement, Element>) => {
+        onFocusOut && onFocusOut(Number(event.target.value))
+    }
     return (
         <div className={classNameWrapper + "flex items-center justify-start "}>
             <button className="border py-1 px-2 border-gray-300 rounded-sm w-" onClick={descrease}>
@@ -51,8 +55,9 @@ export const QuantityController = ({ max, onDescrease, onInscrease, onType, clas
                 type="text"
                 classNameError="hidden"
                 name="form"
-                classNameInput="px-1 py-1 text-sm w-12 outline-none border border-gray-300 rounded-sm focus:shadow-sm text-center"
+                classNameInput="px-1 py-1 text-sm w-10 outline-none border border-gray-300 rounded-sm focus:shadow-sm text-center"
                 value={value}
+                onBlur={(event) => handleOnFocusOut(event)}
                 onChange={handleChange}
                 {...rest}
             />

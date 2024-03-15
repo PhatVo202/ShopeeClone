@@ -15,6 +15,7 @@ const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 export default function Register() {
   const { setIsAuthenticated } = useContext(AppContext)
+
   const {
     register,
     handleSubmit,
