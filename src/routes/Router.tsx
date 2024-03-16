@@ -7,8 +7,11 @@ import { Cart } from 'src/pages/Cart/Cart'
 import { Login } from 'src/pages/Login/Login'
 import { ProductDetail } from 'src/pages/ProductDetail/ProductDetail'
 import ProductList from 'src/pages/ProductList/ProductList'
-import { Profile } from 'src/pages/Profile/Profile'
 import Register from 'src/pages/Register/Register'
+import { UserLayout } from 'src/pages/User/layouts/UserLayout/UserLayout'
+import { ChangePassword } from 'src/pages/User/pages/ChangePassword/ChangePassword'
+import { HistoryPurchase } from 'src/pages/User/pages/HistoryPurchase/HistoryPurchase'
+import { Profile } from 'src/pages/User/pages/Profile/Profile'
 
 
 const AuthGuard = () => {
@@ -63,17 +66,32 @@ export default function Router() {
       element: <AuthGuard />,
       children: [
         {
-          path: 'profile',
-          element: <MainLayout>
-            <Profile />
-          </MainLayout>
-        },
-        {
           path: '/cart',
           element: <MainLayout>
             <Cart />
           </MainLayout>
-        }
+        },
+        {
+          path: '/user',
+          element: <MainLayout>
+            <UserLayout />
+          </MainLayout>,
+          children: [
+            {
+              path: '/user/profile',
+              element: <Profile />
+            },
+            {
+              path: '/user/password',
+              element: <ChangePassword />
+            },
+            {
+              path: '/user/purchase',
+              element: <HistoryPurchase />
+            }
+          ]
+        },
+
       ]
     },
 

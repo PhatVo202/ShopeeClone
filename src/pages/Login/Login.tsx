@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from 'src/components/Input/Input'
 import { useMutation } from '@tanstack/react-query'
 import { loginApi } from 'src/servers/auth.api'
-import { Flip, toast } from 'react-toastify'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 
@@ -36,20 +35,20 @@ export const Login = () => {
         console.log(data),
           setIsAuthenticated(true)
         navigate('/')
-      },
-      onError: (errors: any) => {
-        toast.error(`${errors.response.data?.data.email}`, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Flip,
-        });
       }
+      // onError: (errors: any) => {
+      //   toast.error(`${errors.response.data?.data.email}`, {
+      //     position: "top-right",
+      //     autoClose: 2000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //     transition: Flip,
+      //   });
+      // }
     })
   })
 

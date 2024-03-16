@@ -11,19 +11,18 @@ import { Schema, schema } from "src/utils/rule";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Popover from "../Popover/Popover";
 import { logout } from "src/servers/auth.api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { purchasesStatus } from "src/constants/purchases";
 import { getPurchasesApi } from "src/servers/purchases.api";
 import { PurchasesListStatus } from "src/types/purchases.type";
 import noProduct from "src/assets/images/no-product.png"
-import { queryClient } from "src/main";
 
 type FormData = Pick<Schema, 'name'>
 const nameSchema = schema.pick(['name'])
 
 export const Header = () => {
     const queryParams: QueryConfig = useQueryParams()
-
+    const queryClient = useQueryClient()
     const queryConfig: QueryConfig = omitBy({
         page: queryParams.page || '1',
         limit: queryParams.limit || '20',
@@ -49,6 +48,7 @@ export const Header = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+
     const arrowRef = useRef(null);
 
     const { refs, context, } = useFloating({
@@ -237,7 +237,7 @@ export const Header = () => {
                         <Popover renderPopover={
                             <div className="bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm">
                                 {
-                                    productDataCart ? (
+                                    productDataCart && productDataCart.length > 0 ? (
                                         <div className="p-2">
                                             <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                                             <div className="mt-5">

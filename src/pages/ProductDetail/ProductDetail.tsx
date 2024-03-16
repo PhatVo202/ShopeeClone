@@ -1,15 +1,14 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Rate } from "antd"
 import DOMPurify from "dompurify"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { getProduct, getProductDetail } from "src/servers/product.api"
 import { Product as ProductType, ProductListConfig } from "src/types/product.type"
 import { getIdFromNameId, rateSale } from "src/utils/utils"
 import { Product } from "../ProductList/components/Product/Product"
 import { QuantityController } from "src/components/QuantityController.tsx/QuantityController"
 import { addToCartApi } from "src/servers/purchases.api"
-import { queryClient } from "src/main"
 import { purchasesStatus } from "src/constants/purchases"
 import { toast } from "react-toastify"
 
@@ -17,6 +16,8 @@ import { toast } from "react-toastify"
 
 export const ProductDetail = () => {
     const { nameId } = useParams()
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const id = getIdFromNameId(nameId as string)
     const [valueNumber, setValueNumber] = useState<number>(1)
 
@@ -98,7 +99,28 @@ export const ProductDetail = () => {
                 queryClient.invalidateQueries({ queryKey: ['purchases', { status: purchasesStatus.inCart }] })
             }
         })
+    }
 
+    // const buyNow = async () => {
+    //     const res = await addToCartMutation.mutateAsync({ buy_count: valueNumber, product_id: product?._id as string })
+    //     const productId = res.data.data
+    //     if (productId) {
+    //         navigate('/cart', {
+    //             state: {
+    //                 productId: productId._id
+    //             }
+    //         })
+    //     }
+    // }
+
+    const buyNow = async () => {
+        const res = await addToCartMutation.mutateAsync({ buy_count: valueNumber, product_id: product?._id as string })
+        const productId = res.data.data
+        navigate('/cart', {
+            state: {
+                productId: productId._id
+            }
+        })
     }
 
     if (!product) return null
@@ -172,7 +194,7 @@ export const ProductDetail = () => {
                                     <span className="ml-2">Thêm vào giỏ hàng</span>
 
                                 </button>
-                                <button className="bg-orange px-14 py-3 rounded ml-3 capitalize text-white border-[#ee4d2d] border hover:bg-orange/90">Mua ngay</button>
+                                <button onClick={() => buyNow()} className="bg-orange px-14 py-3 rounded ml-3 capitalize text-white border-[#ee4d2d] border hover:bg-orange/90">Mua ngay</button>
                             </div>
                         </div>
                     </div>
