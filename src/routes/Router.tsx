@@ -5,6 +5,7 @@ import { MainLayout } from 'src/layouts/MainLayout/MainLayout'
 import RegisterLayout from 'src/layouts/RegisterLayout/RegisterLayout'
 import { Cart } from 'src/pages/Cart/Cart'
 import { Login } from 'src/pages/Login/Login'
+import PageNotFound from 'src/pages/PageNotFound/PageNotFound'
 import { ProductDetail } from 'src/pages/ProductDetail/ProductDetail'
 import ProductList from 'src/pages/ProductList/ProductList'
 import Register from 'src/pages/Register/Register'
@@ -59,6 +60,10 @@ export default function Router() {
       element: <MainLayout>
         <ProductDetail />
       </MainLayout>
+    },
+    {
+      path: '*',
+      element: <PageNotFound />
     }
     ,
     {

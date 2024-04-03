@@ -11,7 +11,8 @@ import { AppContext } from "src/contexts/app.context"
 import { saveProfileToLS } from "src/utils/auth"
 import { getAvatarUrl } from "src/utils/utils"
 import { toast } from "react-toastify"
-import { maxSizeUploadAvatar } from "src/pages/constants"
+import { maxSizeUploadAvatar } from "src/constants"
+
 
 
 type FormData = Pick<UserScheme, 'name' | 'avatar' | 'phone' | 'address' | 'date_of_birth'>
