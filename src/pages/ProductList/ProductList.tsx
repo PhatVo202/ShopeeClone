@@ -4,12 +4,11 @@ import { AsideFilter } from "./components/AsideFilter/AsideFilter";
 import { Product } from "./components/Product/Product";
 import { SortProductList } from "./components/SortProductList/SortProductList";
 import { useQueryParams } from "src/hooks/useQueryParams";
-import { getProduct } from "src/servers/product.api";
+import { getProduct } from "src/apis/product.api";
 
 import { ProductListConfig } from "src/types/product.type";
 import Pagination from "src/components/Pagination/Pagination";
-import { fetchCategoryApi } from "src/servers/category.api";
-
+import { fetchCategoryApi } from "src/apis/category.api";
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string

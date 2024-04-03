@@ -1,3 +1,5 @@
+import userSvg from 'src/assets/images/user.svg'
+
 export const rateSale = (orginal: number, pricePresent: number) =>
   Math.floor(((orginal - pricePresent) / orginal) * 100)
 
@@ -18,3 +20,6 @@ export const getIdFromNameId = (nameId: string) => {
 export function formatCurrency(currency: number) {
   return new Intl.NumberFormat('de-DE').format(currency)
 }
+
+export const getAvatarUrl = (avatarName?: string) =>
+  avatarName ? `https://api-ecom.duthanhduoc.com/images/${avatarName}` : userSvg

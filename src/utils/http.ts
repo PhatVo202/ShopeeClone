@@ -57,7 +57,7 @@ class Http {
         if (error.response?.status === HttpStatusCode.Unauthorized) {
           const data: any | undefined = error.response.data
           clearAccessTokentoLocalStorages()
-          const message = data.message || error.message
+          const message = data?.message || error.message
           toast.error(message)
         }
         return Promise.reject(error)

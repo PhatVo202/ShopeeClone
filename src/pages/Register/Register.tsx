@@ -4,7 +4,7 @@ import { Input } from 'src/components/Input/Input'
 import { NoUndefinedField, Schema, schema } from 'src/utils/rule'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { registerApi } from 'src/servers/auth.api'
+import { registerApi } from 'src/apis/auth.api'
 import { toast, Flip } from 'react-toastify';
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'

@@ -1,5 +1,5 @@
 import { purchasesStatus } from "src/constants/purchases"
-import { buyProductsApi, deleteProductsApi, getPurchasesApi, updateProductsApi } from "src/servers/purchases.api"
+import { buyProductsApi, deleteProductsApi, getPurchasesApi, updateProductsApi } from "src/apis/purchases.api"
 import { Purchases, PurchasesListStatus } from "src/types/purchases.type"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { Link, useLocation } from "react-router-dom"

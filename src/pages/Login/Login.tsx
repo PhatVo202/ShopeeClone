@@ -4,9 +4,10 @@ import { Schema, schema } from 'src/utils/rule'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from 'src/components/Input/Input'
 import { useMutation } from '@tanstack/react-query'
-import { loginApi } from 'src/servers/auth.api'
+import { loginApi } from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
+import { saveProfileToLS } from 'src/utils/auth'
 
 
 export const Login = () => {
@@ -17,7 +18,7 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(loginSchema)
   })
@@ -32,8 +33,9 @@ export const Login = () => {
   const onSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
       onSuccess: data => {
-        console.log(data),
-          setIsAuthenticated(true)
+        console.log(data)
+        setIsAuthenticated(true)
+        saveProfileToLS(data.data.data.user)
         navigate('/')
       }
       // onError: (errors: any) => {
@@ -85,7 +87,7 @@ export const Login = () => {
               <div className='mt-3'>
                 <button
                   type='submit'
-                  className=' w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
+                  className=' w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600 flex justify-center '
                 >
                   Đăng nhập
                 </button>
