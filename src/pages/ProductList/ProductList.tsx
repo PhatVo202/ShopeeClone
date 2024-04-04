@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { omitBy, isUndefined } from 'lodash'
+import omitBy from "lodash/omitBy";
+import isUndefined from "lodash/isUndefined";
 import { AsideFilter } from "./components/AsideFilter/AsideFilter";
 import { Product } from "./components/Product/Product";
 import { SortProductList } from "./components/SortProductList/SortProductList";

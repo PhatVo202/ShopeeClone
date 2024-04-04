@@ -13,12 +13,11 @@ import { getAvatarUrl } from "src/utils/utils"
 import { toast } from "react-toastify"
 import { maxSizeUploadAvatar } from "src/constants"
 
-
-
 type FormData = Pick<UserScheme, 'name' | 'avatar' | 'phone' | 'address' | 'date_of_birth'>
 const profileSchema = userSchema.pick(['address', 'name', 'phone', 'date_of_birth', 'avatar'])
 
-export const Profile = () => {
+
+export default function Profile() {
   const [file, setFile] = useState<File>()
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : ''
@@ -80,6 +79,7 @@ export const Profile = () => {
         avatar: avatarName
       })
       setProfile(res.data.data)
+      console.log(res.data.data)
       saveProfileToLS(res.data.data)
       refetch()
       toast.success(res.data.message)

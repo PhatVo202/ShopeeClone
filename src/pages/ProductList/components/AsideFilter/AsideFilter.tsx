@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { schema, Schema, NoUndefinedField } from "src/utils/rule"
 import { ObjectSchema } from "yup"
 import { Rate } from "antd"
-import { omit } from "lodash"
+import omit from "lodash/omit"
 
 interface Props {
   categoryData: CategoryType[],

@@ -9,9 +9,7 @@ import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import { saveProfileToLS } from 'src/utils/auth'
 
-
-export const Login = () => {
-
+export default function Login() {
   type FormData = Pick<Schema, 'email' | 'password'>
   const loginSchema = schema.pick(['email', 'password'])
 
@@ -105,3 +103,4 @@ export const Login = () => {
     </div>
   )
 }
+

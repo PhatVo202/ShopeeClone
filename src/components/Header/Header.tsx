@@ -1,11 +1,13 @@
 import { offset, shift, useFloating, useHover, useInteractions } from "@floating-ui/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link, createSearchParams, useNavigate } from "react-router-dom"
 import { arrow } from '@floating-ui/react';
 import { AppContext } from "src/contexts/app.context";
 import { QueryConfig } from "src/pages/ProductList/ProductList";
 import { useQueryParams } from "src/hooks/useQueryParams";
-import { isUndefined, omit, omitBy } from "lodash";
+import isUndefined from "lodash/isUndefined";
+import omit from "lodash/omit";
+import omitBy from "lodash/omitBy";
 import { useForm } from "react-hook-form";
 import { Schema, schema } from "src/utils/rule";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,6 +19,7 @@ import { getPurchasesApi } from "src/apis/purchases.api";
 import { PurchasesListStatus } from "src/types/purchases.type";
 import noProduct from "src/assets/images/no-product.png"
 import { getAvatarUrl } from "src/utils/utils";
+
 
 type FormData = Pick<Schema, 'name'>
 const nameSchema = schema.pick(['name'])
@@ -37,10 +40,6 @@ export const Header = () => {
     category: queryParams.category,
     sort_by: queryParams.sort_by
   }, isUndefined)
-
-  useEffect(() => {
-
-  }, [profile])
 
   const {
     register,
@@ -114,13 +113,7 @@ export const Header = () => {
   return (
     <header className="py-5 bg-[linear-gradient(-180deg,#f53d2d,#f63);]">
       <div className="container">
-        <div className="flex justify-between text-white">
-          <div>
-            <Link to=''>Kênh Người Bán</Link>
-            <Link to=''>Trở thành Người bán Shopee</Link>
-            <Link to=''>Tải ứng dụng</Link>
-            <Link to=''>Kết nối</Link>
-          </div>
+        <div className=" text-white">
           <div className="flex justify-end ">
             <Link to='' className=" flex items-center hover:text-gray-300">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
@@ -204,7 +197,11 @@ export const Header = () => {
                 }
               >
                 <div className='mr-2 h-6 w-6 flex-shrink-0'>
-                  <img src={getAvatarUrl(profile?.avatar)} alt='avatar' className='h-full w-full rounded-full object-cover' />
+                  {
+                    profile ? <img src={getAvatarUrl(profile?.avatar)} alt='avatar' className='h-full w-full rounded-full object-cover' /> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                  }
                 </div>
                 <div>{profile?.name}</div>
               </Popover>

@@ -7,9 +7,7 @@ import { useQueryParams } from "src/hooks/useQueryParams"
 import { PurchasesListStatus } from "src/types/purchases.type"
 import { formatCurrency, generateNameId } from "src/utils/utils"
 
-
-
-export const HistoryPurchase = () => {
+export default function HistoryPurchase() {
   const queryParams: { [status: string]: string } = useQueryParams()
   const status: number = Number(queryParams.status) || purchasesStatus.allProduct
 
@@ -84,5 +82,4 @@ export const HistoryPurchase = () => {
     </div >
   )
 }
-
 

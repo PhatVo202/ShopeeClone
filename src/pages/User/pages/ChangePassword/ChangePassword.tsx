@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useMutation } from "@tanstack/react-query"
-import { omit } from "lodash"
+import omit from "lodash/omit"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { Input } from "src/components/Input/Input"
@@ -10,7 +10,7 @@ import { UserScheme, userSchema } from "src/utils/rule"
 type FormData = Pick<UserScheme, 'password' | 'new_password' | 'confirm_password'>
 const passwordSchema = userSchema.pick(['password', 'new_password', 'confirm_password'])
 
-export const ChangePassword = () => {
+export default function ChangePassword() {
   const { register, formState: { errors }, handleSubmit, reset } = useForm<FormData>({
     defaultValues: {
       password: '',

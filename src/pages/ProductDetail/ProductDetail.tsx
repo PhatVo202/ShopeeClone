@@ -12,9 +12,7 @@ import { addToCartApi } from "src/apis/purchases.api"
 import { purchasesStatus } from "src/constants/purchases"
 import { toast } from "react-toastify"
 
-
-
-export const ProductDetail = () => {
+export default function ProductDetail() {
   const { nameId } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
