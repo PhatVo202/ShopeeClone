@@ -9,6 +9,7 @@ import { schema, Schema, NoUndefinedField } from "src/utils/rule"
 import { ObjectSchema } from "yup"
 import { Rate } from "antd"
 import omit from "lodash/omit"
+import { useTranslation } from "react-i18next"
 
 interface Props {
   categoryData: CategoryType[],
@@ -20,6 +21,7 @@ type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
 const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
+  const { t } = useTranslation()
   const { category } = queryConfig;
   const navigate = useNavigate()
 
@@ -56,8 +58,8 @@ export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
     <div className="py-4">
       <Link to='' className="flex items-center font-bold">
         <svg viewBox="0 0 12 10" className="w-3 h-4 mr-3 fill-current"><g fillRule="evenodd" stroke="none" strokeWidth={1}><g transform="translate(-373 -208)"><g transform="translate(155 191)"><g transform="translate(218 17)"><path d="m0 2h2v-2h-2zm4 0h7.1519633v-2h-7.1519633z" /><path d="m0 6h2v-2h-2zm4 0h7.1519633v-2h-7.1519633z" /><path d="m0 10h2v-2h-2zm4 0h7.1519633v-2h-7.1519633z" /></g></g></g></g></svg>
-
-        Tất Cả Danh Mục
+        {/* Tất Cả Danh Mục */}
+        {t('all categories')}
       </Link>
       <div className="bg-gray-300 h-[1px] my-4" />
       <ul>
@@ -81,7 +83,7 @@ export const AsideFilter = ({ categoryData, queryConfig }: Props) => {
       </ul>
       <Link to='' className="flex items-center font-bold uppercase mt-4">
         <svg enableBackground="new 0 0 15 15" viewBox="0 0 15 15" x={0} y={0} className="w-3 h-4 fill-current stroke-current mr-3"><g><polyline fill="none" points="5.5 13.2 5.5 5.8 1.5 1.2 13.5 1.2 9.5 5.8 9.5 10.2" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit={10} /></g></svg>
-        bộ lọc tìm kiếm
+        {t('filter search')}
       </Link>
       <div className="bg-gray-300 h-[1px] my-4" />
       <div className="my-5">

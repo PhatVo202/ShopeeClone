@@ -8,6 +8,7 @@ import { loginApi } from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import { saveProfileToLS } from 'src/utils/auth'
+import { Helmet } from 'react-helmet-async'
 
 export default function Login() {
   type FormData = Pick<Schema, 'email' | 'password'>
@@ -56,6 +57,10 @@ export default function Login() {
 
   return (
     <div className='bg-orange'>
+      <Helmet>
+        <title>Đăng nhập</title>
+        <meta name="description" content="Đăng nhập vào dự án Shopee Clone" />
+      </Helmet>
       <div className='max-w-7xl mx-auto px-4'>
         <div className='grid grid-col-s-1 lg:grid-cols-5 lg:py-32 lg:pr-10 gap-5 items-center'>
           <div className='grid-cols-none lg:col-span-3'>

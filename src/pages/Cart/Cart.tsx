@@ -11,6 +11,7 @@ import { produce } from "immer"
 import keyBy from "lodash/keyBy"
 import { toast } from "react-toastify"
 import noProduct from "src/assets/images/no-product.png"
+import { Helmet } from "react-helmet-async"
 
 
 interface ExtendedProductDataCart extends Purchases {
@@ -144,6 +145,10 @@ export default function Cart() {
 
   return (
     <div className="bg-neutral-100 py-16 ">
+      <Helmet>
+        <title>Giỏ hàng | Shopee Clone</title>
+        <meta name="description" content="Giỏ hàng dự án Shopee Clone nơi mua sắm dành cho mọi người" />
+      </Helmet>
       <div className="container">
         {
           extendedProductDataCart.length > 0 ? (

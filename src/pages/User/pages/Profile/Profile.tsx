@@ -12,6 +12,7 @@ import { saveProfileToLS } from "src/utils/auth"
 import { getAvatarUrl } from "src/utils/utils"
 import { toast } from "react-toastify"
 import { maxSizeUploadAvatar } from "src/constants"
+import { Helmet } from "react-helmet-async"
 
 type FormData = Pick<UserScheme, 'name' | 'avatar' | 'phone' | 'address' | 'date_of_birth'>
 const profileSchema = userSchema.pick(['address', 'name', 'phone', 'date_of_birth', 'avatar'])
@@ -90,6 +91,10 @@ export default function Profile() {
   })
   return (
     <div className="rounded-sm bg-white px-2 pb-10 md:pb-20 shadow">
+      <Helmet>
+        <title>Thông tin tài khoản</title>
+        <meta name="description" content="Thông tin cá nhân của dự án Shopee Clone " />
+      </Helmet>
       <div className="border-b border-b-gray-200 py-6">
         <h1 className="text-lg font-medium capitalize text-gray-900">
           Hồ sơ của tôi

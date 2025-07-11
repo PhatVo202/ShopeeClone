@@ -25,9 +25,9 @@ class Http {
       baseURL: 'https://api-ecom.duthanhduoc.com/',
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json',
-        'expire-access-token': 10 * 10,
-        'expire-refresh-token': 60 * 60 //1h
+        'Content-Type': 'application/json'
+        // 'expire-access-token': 10 * 10,
+        // 'expire-refresh-token': 60 * 60 //1h
       }
     })
 
@@ -68,9 +68,9 @@ class Http {
         }
 
         if (error.response?.status === HttpStatusCode.Unauthorized) {
-          console.log(data.data.message)
-          const message = data?.message || error.message
-          toast.error(data.data.message)
+          // console.log(data.data.message)
+          // const message = data?.message || error.message
+          // toast.error(data.data.message)
           // clearAccessTokentoLocalStorages()
           this.refreshTokenRequest = this.refreshTokenRequest
             ? this.refreshTokenRequest

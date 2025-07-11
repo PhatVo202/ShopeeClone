@@ -8,6 +8,7 @@ import { registerApi } from 'src/apis/auth.api'
 import { toast, Flip } from 'react-toastify';
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
+import { Helmet } from 'react-helmet-async'
 
 type FormData = NoUndefinedField<Pick<Schema, 'email' | 'password' | 'confirm_password'>>
 
@@ -59,6 +60,10 @@ export default function Register() {
 
   return (
     <div className='bg-orange'>
+      <Helmet>
+        <title>Đăng ký</title>
+        <meta name="description" content="Đăng ký tài khoản vào dự án Shopee Clone" />
+      </Helmet>
       <div className='max-w-7xl mx-auto px-4'>
         <div className='grid grid-cols-1 lg:grid-cols-5 lg:py-32 lg:pr-10 gap-5 items-center'>
           <div className='grid-cols-none lg:col-span-3'>

@@ -10,6 +10,7 @@ import { getProduct } from "src/apis/product.api";
 import { ProductListConfig } from "src/types/product.type";
 import Pagination from "src/components/Pagination/Pagination";
 import { fetchCategoryApi } from "src/apis/category.api";
+import { Helmet } from "react-helmet-async";
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -45,6 +46,10 @@ export default function ProductList() {
   })
 
   return <div className="bg-gray-200 py-6 ">
+    <Helmet>
+      <title>Trang chủ | Shopee Clone</title>
+      <meta name="description" content="Trang chủ dự án Shopee Clone nơi mua sắm dành cho mọi người" />
+    </Helmet>
     <div className="container" >
       {
         productData && (
